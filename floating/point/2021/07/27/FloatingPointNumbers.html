@@ -213,7 +213,7 @@ window.onload = wrap_img;
 <p>First bit (MSB) can be used for sign: 0(+ve), 1(-ve)
 Next 3 bits can be used for exponent.
 Remaining 4 bits can be used for mantissa.</p>
-<p>Let's use biased representation, so exponent value stored ranges from 0 to 7 (unsigned +ve number) with bias 3. So, actual values for exponent ranges from $E_{min} = -3$ to $E_{max} = 4$.</p>
+<p>Let's use biased representation, so exponent value stored ranges from 0 to 7 (unsigned +ve number) with a bias of 3. So, actual values for exponent ranges from $E_{min} = -3$ to $E_{max} = 4$.</p>
 <p>Let's also say that exponent = 000 with mantissa = 0000 is reserved for 0.</p>
 <p>Let's say exponent = 111 mantissa = 0000 reserved for INFINITY.</p>
 <p>This will rule out -3 and 4 from being used as exponents for normal numbers. So, actual represented range is from 1 to 6 (biased representation) or as values from -2 to 3.</p>
