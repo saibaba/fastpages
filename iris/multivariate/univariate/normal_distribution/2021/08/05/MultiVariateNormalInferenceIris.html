@@ -154,7 +154,7 @@ window.onload = wrap_img;
         
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This article assumes that reader is familiar with programming, basic probability theory including normal distributions.</p>
+<p>This article assumes that reader is familiar with programming, basic probability theory including normal distributions, and usage of python libraries like numpy, tensorflow.</p>
 <p>Say, we are given a data point $x$ which is a d-dimensional feature vector. We are asked to classify, which class could it fit in one of the $c$ classes. Let $w_i$ represent the $i^{th}$ class. Let $W$ be a random variable representing the class.</p>
 <p>If we do not care about the content/features of $x$, we can just see which class occurs most abundantly and assign that class as the category for the data point. More precisely, we check which of all probabilities, $P(W=w_i)$ is the highest, and assign $x$ to it without much thinking. But we know that is not the right answer as we end up assigning all data points to the most popular one. It becomes more troublesome particularly when mis-assignment could lead to risks or penalties. So, what can we do?</p>
 <p>We could dive deep into $x$ and check which of the classes are better representative of the features present in $x$. Of these, pick the one that best represents these features. Hence, by looking at the evidence $x$, we adjust our decision of which class to use (bayes theorem).</p>
@@ -172,12 +172,12 @@ window.onload = wrap_img;
 <p>We could gather some representative data D and use any of estimation techniques.</p>
 <p>For example, we can use the maximum likelihood estimate or MLE of the chosen PDF to compute $P(W=w_i)$. That is no problem in general except in cases where we might not have correct proportion of them that reflect true population. For example, in an analysis of tumor we might decide to have equal number of those that have tumor and those that do not - and it might be the case that true proportion of those that have tumor is only 0.01; in general we deal with this by having proper prior probability to ensure to offset this. The tumor example is from NNPR/Bishop pg20). Let me not digress into this for now and assume that is not the case in below discussions.</p>
 <p>The bigger problem is computing $P(X|W=w_i)$ using the same D. Why? In D, for a given $W=w_i$, there are in general very few that correspond to each possible combination of features. If $x$ has lot of features, to cover for each feature combination in $x$, we need large number of examples to get a useful representation of them for estimating the conditional probabilities.</p>
-<p>There are other issues in applying MLE to find $P(X|W=w_i)$:</p>
+<p>As a side note, there are other issues in applying MLE to find $P(X|W=w_i)$:</p>
 <ul>
 <li>Consider the case where a particular feature vector with specific values for each dimension did not occur in the data at all. We cannot use 0 as the probability, but a low prior probability. So, instead of MLE we should use bayes posterior.</li>
 <li>There is another problem with MLE: it does not treat that observing 6 heads out 10 coin flips different from 60 out of 100. MLE estimate is still 0.6. But we know with 100, we are more confident. So, instead of MLE we should again use bayes posterior.</li>
 </ul>
-<p>So, here come the two key limitations in learning from data: If we can leverage more dimensions to make decision, we could be performing better. But, that also means we need more data so that it covers the permutations of the feature. This also means we need more computing power. So, we have to make a trade off here between the number of features vs. available data.</p>
+<p>So, here are the two key limitations in learning from data: If we can leverage more dimensions to make decision, we could be performing better. But, that also means we need more data so that it covers the various permutations of the features values. This also means we need more computing power. So, we have to make a trade off here between the number of features vs. available data vs. computing power we have.</p>
 <p>In any case, once we determine the posterior probabilities for each catagory using the sample dataset D, we can then plug in feature values in $x$ to find the category that has highest posterior probability and we assign that category to $x$. There are other ways to, but I am keeping it simple for now.</p>
 
 </div>
@@ -198,7 +198,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span>
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pingouin</span>
 </pre></div>
 
     </div>
@@ -217,23 +217,22 @@ window.onload = wrap_img;
     <div class="input_area">
 <div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
 
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 <span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
+<span class="kn">import</span> <span class="nn">tensorflow_probability</span> <span class="k">as</span> <span class="nn">tfp</span>
+<span class="n">tfd</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">distributions</span>
 
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">UnivariateSpline</span>
 <span class="kn">from</span> <span class="nn">scipy.stats.kde</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
-
-<span class="kn">import</span> <span class="nn">tensorflow_probability</span> <span class="k">as</span> <span class="nn">tfp</span>
-<span class="n">tfd</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">distributions</span>
-
-<span class="kn">import</span> <span class="nn">operator</span>
 
 <span class="kn">from</span> <span class="nn">pingouin</span> <span class="kn">import</span> <span class="n">multivariate_normality</span>
+
+<span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">math</span> <span class="k">as</span> <span class="nn">m</span>
 </pre></div>
 
@@ -251,8 +250,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">use_dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span>
-<span class="n">pi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">pi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.grid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -536,7 +534,8 @@ And there are 3 categories or classes: setosa, versicolor, virginica.</p>
             <span class="c1"># For MVNm we need mean vector and covariance matrix.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span> <span class="p">[</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="p">])</span>    
             <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="c1"># self.cov = tfp.stats.covariance(self.data, sample_axis=0, event_axis=1, keepdims=False) </span>
+            <span class="c1"># self.cov = tfp.stats.covariance(self.data, sample_axis=0, event_axis=1, keepdims=False)</span>
+            <span class="c1"># hand calculate covariance just to shed more light on how it is done</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__cov__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gauss</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">MultivariateNormalFullCovariance</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">)</span>
             <span class="c1"># self.gauss =  MultivariateNormalTriL(loc=self.m, scale_tril=tf.linalg.cholesky(self.cov))</span>
@@ -687,6 +686,7 @@ And there are 3 categories or classes: setosa, versicolor, virginica.</p>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total correct = &quot;</span> <span class="p">,</span> <span class="n">verifier</span><span class="o">.</span><span class="n">correct</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total wrong = &quot;</span><span class="p">,</span> <span class="n">verifier</span><span class="o">.</span><span class="n">wrong</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">% c</span><span class="s2">orrect: &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">verifier</span><span class="o">.</span><span class="n">correct</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="mi">150</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -716,6 +716,7 @@ virginica marked as setosa:  []
 virginica marked as versicolor:  [(4.8, 1.8)]
 Total correct =  143
 Total wrong =  7
+% correct:  95.33
 </pre>
 </div>
 </div>
@@ -1039,6 +1040,7 @@ HZResults(hz=0.8731316923946509, pval=0.04085997245484832, normal=False)
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total correct = &quot;</span> <span class="p">,</span> <span class="n">verifier</span><span class="o">.</span><span class="n">correct</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total wrong = &quot;</span><span class="p">,</span> <span class="n">verifier</span><span class="o">.</span><span class="n">wrong</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">% c</span><span class="s2">orrect: &quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">verifier</span><span class="o">.</span><span class="n">correct</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="mi">150</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -1051,10 +1053,7 @@ HZResults(hz=0.8731316923946509, pval=0.04085997245484832, normal=False)
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>WARNING:tensorflow:From /usr/local/lib/python3.7/dist-packages/tensorflow_probability/python/distributions/distribution.py:346: MultivariateNormalFullCovariance.__init__ (from tensorflow_probability.python.distributions.mvn_full_covariance) is deprecated and will be removed after 2019-12-01.
-Instructions for updating:
-`MultivariateNormalFullCovariance` is deprecated, use `MultivariateNormalTriL(loc=loc, scale_tril=tf.linalg.cholesky(covariance_matrix))` instead.
-Verify train data...
+<pre>Verify train data...
 setosa marked as versicolor:  []
 setosa marked as virginica:  []
 versicolor marked as setosa:  []
@@ -1071,6 +1070,7 @@ virginica marked as setosa:  []
 virginica marked as versicolor:  [(5.1, 1.5)]
 Total correct =  146
 Total wrong =  4
+% correct:  97.33
 </pre>
 </div>
 </div>
