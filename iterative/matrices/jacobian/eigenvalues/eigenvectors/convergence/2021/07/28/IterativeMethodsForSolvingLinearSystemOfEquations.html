@@ -9,15 +9,15 @@
 <meta property="og:title" content="Iterative method for solving linear system of equations" />
 <meta name="author" content="Saibaba Telukunta" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Understand basics of iterative methods, error analysis" />
-<meta property="og:description" content="Understand basics of iterative methods, error analysis" />
+<meta name="description" content="Understand basics of iterative methods, analysis of error and convergence of solution" />
+<meta property="og:description" content="Understand basics of iterative methods, analysis of error and convergence of solution" />
 <link rel="canonical" href="https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html" />
 <meta property="og:url" content="https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html" />
 <meta property="og:site_name" content="fastpages" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2021-07-28T00:00:00-05:00" />
 <script type="application/ld+json">
-{"datePublished":"2021-07-28T00:00:00-05:00","url":"https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html","@type":"BlogPosting","headline":"Iterative method for solving linear system of equations","dateModified":"2021-07-28T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html"},"author":{"@type":"Person","name":"Saibaba Telukunta"},"description":"Understand basics of iterative methods, error analysis","@context":"https://schema.org"}</script>
+{"datePublished":"2021-07-28T00:00:00-05:00","url":"https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html","@type":"BlogPosting","headline":"Iterative method for solving linear system of equations","dateModified":"2021-07-28T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://saibaba.github.io/fastpages/iterative/matrices/jacobian/eigenvalues/eigenvectors/convergence/2021/07/28/IterativeMethodsForSolvingLinearSystemOfEquations.html"},"author":{"@type":"Person","name":"Saibaba Telukunta"},"description":"Understand basics of iterative methods, analysis of error and convergence of solution","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/fastpages/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://saibaba.github.io/fastpages/feed.xml" title="fastpages" /><link rel="shortcut icon" type="image/x-icon" href="/fastpages/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
@@ -88,7 +88,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Iterative method for solving linear system of equations</h1><p class="page-description">Understand basics of iterative methods, error analysis</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-07-28T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Iterative method for solving linear system of equations</h1><p class="page-description">Understand basics of iterative methods, analysis of error and convergence of solution</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-07-28T00:00:00-05:00" itemprop="datePublished">
         Jul 28, 2021
       </time>• 
           <span itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -169,9 +169,9 @@ window.onload = wrap_img;
 <h2 id="Introduction">
 <a class="anchor" href="#Introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction<a class="anchor-link" href="#Introduction"> </a>
 </h2>
-<p>Many of the articles and books employ matrix decomposition, in particular use eigenvalue decomposition for the proofs of convergence of iterative methods like Jacobi method. It is not clear or immediately obvious how and why those methods work and what is the connection. So, I wanted to start from fundamentals and introduce these tools progressively so we can better understand these techniques and apply to novel problems.</p>
-<p>There are various reasons that are outside the scope of this article to discuss why we want to do solve equations using iterative methods. That is outside the scope of this article.</p>
-<p>I first use a single variable case as a warmup and introudce the underlying idea. Then expand it to multiple variables case.</p>
+<p>Many of the articles and books employ matrix decomposition, in particular use eigendecomposition for the proofs of convergence of iterative methods like Jacobi method. It is not clear or immediately obvious how and why those methods work and what is the connection. So, I wanted to start from fundamentals and introduce these tools progressively so we can better understand these techniques and apply to novel problems.</p>
+<p>There are various reasons that are outside the scope of this article to discuss why we want to solve equations using iterative methods.</p>
+<p>I first use a single variable case as a warmup and introudce the underlying idea. Then expand the techniques to multiple variables case.</p>
 
 </div>
 </div>
@@ -209,7 +209,7 @@ x_{i+1} &amp;= P * x_{i} + z \\
         &amp;= P * [ P * x_{i-1} + z ] + z \\
         &amp;= P^2 x_{i-1} + P z + z
 \end{aligned}$</p>
-<p><strong>Error analysis:</strong></p>
+<p><strong>Error Analysis:</strong></p>
 <p>Let the error in any step be distance from true value (which is not known and represented by $x$ in below equations):</p>
 <p>$e_0 = x_0 - x$</p>
 <p>$e_1 = x_1 - x$</p>
@@ -240,6 +240,7 @@ e_{i+1} = x_{i+1} - x
 
    P = 1/4
    z = 6/4</code></pre>
+<p><strong>Convergence of solution:</strong></p>
 <p>How about convergence of $x_i$ itself?</p>
 <p>$\begin{aligned}
 x_{i+1} - x &amp;= P * e_i \\
@@ -247,7 +248,7 @@ x_{i+1} - x &amp;= P * e_i \\
         &amp;= P^{i+1} * (x_0 - x)
 \end{aligned}$</p>
 <p>We see that the difference between actual value and the iteration value of x decreases as we contine the iteration.</p>
-<p>Let's continue this for few iterations and see where it takes us:</p>
+<p>Let's test this some code:</p>
 
 </div>
 </div>
@@ -259,7 +260,12 @@ x_{i+1} - x &amp;= P * e_i \\
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">B</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="n">M</span> <span class="o">=</span> <span class="mi">4</span>
 
 <span class="n">P</span> <span class="o">=</span> <span class="mf">0.25</span>
@@ -271,27 +277,31 @@ x_{i+1} - x &amp;= P * e_i \\
 <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="n">e0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">-</span><span class="n">x</span>
-
-<span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="n">e0</span><span class="p">]</span>
-
+<span class="n">el</span> <span class="o">=</span> <span class="p">[</span><span class="n">e0</span><span class="p">]</span>
 <span class="n">ec</span> <span class="o">=</span> <span class="n">e0</span>
 
 <span class="n">xl</span> <span class="o">=</span> <span class="p">[</span><span class="n">x0</span><span class="p">]</span>
-
 <span class="n">xc</span> <span class="o">=</span> <span class="n">x0</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
     <span class="n">en</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="n">ec</span>
-    <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">en</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">en</span><span class="p">)</span>
     <span class="n">ec</span> <span class="o">=</span> <span class="n">en</span>
-    <span class="n">xl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xc</span><span class="p">)</span>
     <span class="n">xn</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="n">xc</span> <span class="o">+</span> <span class="n">z</span>
     <span class="n">xl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xn</span><span class="p">)</span>
     <span class="n">xc</span> <span class="o">=</span> <span class="n">xn</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Errors:"</span><span class="p">)</span>    
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">ei</span><span class="p">)</span> <span class="k">for</span> <span class="n">ei</span> <span class="ow">in</span> <span class="n">e</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Value of x in each iteration:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]))</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+
+<span class="n">err_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">sol_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+
+
+<span class="n">err_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Error'</span><span class="p">)</span>
+<span class="n">err_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">el</span><span class="p">)),</span> <span class="n">el</span><span class="p">)</span>
+
+<span class="n">sol_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Solution'</span><span class="p">)</span>
+<span class="n">sol_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xl</span><span class="p">)),</span> <span class="n">xl</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -303,43 +313,22 @@ x_{i+1} - x &amp;= P * e_i \\
 
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Errors:
--0.8999999999999999
--0.22499999999999998
--0.056249999999999994
--0.014062499999999999
--0.0035156249999999997
--0.0008789062499999999
--0.00021972656249999998
--5.4931640624999995e-05
--1.3732910156249999e-05
--3.4332275390624997e-06
--8.583068847656249e-07
-Value of x in each iteration:
-1.1
-1.1
-1.775
-1.775
-1.94375
-1.94375
-1.9859375
-1.9859375
-1.996484375
-1.996484375
-1.99912109375
-1.99912109375
-1.9997802734375
-1.9997802734375
-1.999945068359375
-1.999945068359375
-1.9999862670898438
-1.9999862670898438
-1.9999965667724608
-1.9999965667724608
-1.9999991416931153
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;matplotlib.lines.Line2D at 0x142265d00&gt;]</pre>
 </div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
 </div>
 
 </div>
@@ -351,8 +340,8 @@ Value of x in each iteration:
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We clearly see that error is decreasing and $x_i$ is converging to 2.0.</p>
-<p>Now let's see how we can employ the same concepts to multiple variables case.</p>
+<p>We clearly see that error is going to zero and $x_i$ is converging to 2.0.</p>
+<p>Now let's see how we can employ some of the same concepts to multiple variables case.</p>
 
 </div>
 </div>
@@ -387,7 +376,7 @@ Value of x in each iteration:
 <p>Mx = -Bx + b</p>
 <p>Let's use an M such that it is invertible (and easily invertible)</p>
 <p>$x = M^{-1}(-Bx+b)$</p>
-<p>Start with random $x = x_0 = \begin{bmatrix}0 &amp;&amp; 0\end{bmatrix}^T$</p>
+<p>Start with a random or zero vector for initial value, $x = x_0 = \begin{bmatrix}0 \\ 0\end{bmatrix}$</p>
 <p>$\begin{aligned}
 x_1 &amp;= M^{-1}(-Bx_0+b) \\
     &amp;= -M^{-1} B x_0 + M^{-1} b
@@ -437,7 +426,7 @@ e_{i+1} &amp;= x_{i+1} - x
 <p>From linear algebra,</p>
 <p>$ ||e_{i+1}|| = || P e_i || \le ||P||_{p} ||e_i||$ for any norm p.
 If $||P||_{p} \lt 1$, the error keeps decreasing. If A is diagonally dominated, then the ‘iteration matrix’ P has an $\infty$-norm that is strictly less than 1. Note that for some norms, p,  $||P||_{p}$ might be less than 1 and may be greater than 1 for some other norms. So, this is only sufficient condition. The necessary condition is that $\rho(P) \lt 1$.</p>
-<p>Let's try on an example (not on the one introduced in this section, though).</p>
+<p>Let's try on the above example through code.</p>
 
 </div>
 </div>
@@ -452,8 +441,10 @@ If $||P||_{p} \lt 1$, the error keeps decreasing. If A is diagonally dominated, 
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">LA</span>
 
-<span class="c1"># works only for diagonally dominant A (equivalent to convergence of P) and with spectral radius of P &lt; 1</span>
+<span class="c1"># works only for diagonally dominant A (equivalent to convergence of P)</span>
+<span class="c1"># and with spectral radius of P &lt; 1</span>
 <span class="c1"># x is used for error analysis only</span>
+
 <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_iter</span> <span class="o">=</span> <span class="mi">60</span><span class="p">):</span>
     
     <span class="n">variable_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -1184,6 +1175,14 @@ value of x after last iteration
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Notice the spiraling movement of w's to convergence due to presence of imaginary component</strong></p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
