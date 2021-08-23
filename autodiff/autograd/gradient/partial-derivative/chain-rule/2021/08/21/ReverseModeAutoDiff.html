@@ -593,6 +593,9 @@ It takes $\frac{\partial L}{\partial v_3}$ and returns (1) $\frac{\partial L}{\p
 <span class="c1"># one class but with different derivative calculation based on the operation performed. So, we store the</span>
 <span class="c1"># derivative calculation as a lambda function in derivatives variable.</span>
 
+<span class="c1"># Note that I have intentially not abstracted too much in Var class - I do not want to hide the necessary </span>
+<span class="c1"># aspects needed to use reverse mode autodiff, but rather expose them so as to understand it better.</span>
+
 <span class="k">class</span> <span class="nc">Var</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
